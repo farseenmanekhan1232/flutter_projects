@@ -33,7 +33,7 @@ class App extends StatelessWidget {
         theme: ThemeData().copyWith(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 63, 17, 177),
+            seedColor: Color.fromARGB(255, 6, 4, 14),
           ),
         ),
         home: StreamBuilder(

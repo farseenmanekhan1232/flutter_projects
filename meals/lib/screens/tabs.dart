@@ -66,11 +66,14 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
       drawer: MainDrawer(onSelectScreen: _setScreen),
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(
-        onTap: _selectPage,
         currentIndex: _selectedPageIndex,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.set_meal),
+            icon: Container(
+              child: IconButton(
+                icon: Icons.set_meal,
+              ),
+            ),
             label: 'Categories',
           ),
           BottomNavigationBarItem(
