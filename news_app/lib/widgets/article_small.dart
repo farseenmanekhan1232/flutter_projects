@@ -3,6 +3,7 @@ import 'package:news_app/models/article.dart';
 import 'package:news_app/providers/news_provider.dart';
 import 'package:news_app/screens/article/full_article.dart';
 import 'package:news_app/widgets/headlines.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -17,8 +18,9 @@ class ArticleSmall extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (ctx) => FullArticleScreen(
+          PageTransition(
+            type: PageTransitionType.bottomToTop,
+            child: FullArticleScreen(
               article: article,
               heading: heading,
             ),
@@ -26,9 +28,10 @@ class ArticleSmall extends StatelessWidget {
         );
       },
       child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
+        decoration: const BoxDecoration(
+          color: Color.fromARGB(73, 216, 216, 216),
         ),
+        margin: const EdgeInsets.all(5),
         padding: const EdgeInsets.all(10),
         width: 250,
         child: Stack(

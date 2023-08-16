@@ -45,7 +45,7 @@ class ArticlesSlider extends StatelessWidget {
           ),
           Container(
             padding: const EdgeInsets.all(5),
-            height: height != null ? height! + 110 : 235,
+            height: height != null ? height! + 120 : 235,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: articles.length > 5 ? 5 : articles.length,

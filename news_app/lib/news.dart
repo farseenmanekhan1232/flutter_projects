@@ -32,9 +32,12 @@ class _NewsState extends State<News> {
   void checkConnection() async {
     final result =
         await Connectivity().checkConnectivity() != ConnectivityResult.none;
-    setState(() {
-      connectionState = result;
-    });
+
+    if (mounted) {
+      setState(() {
+        connectionState = result;
+      });
+    }
   }
 
   @override
@@ -43,15 +46,18 @@ class _NewsState extends State<News> {
     if (widget.index != null) _index = widget.index!;
 
     Timer(const Duration(milliseconds: 300), () {
-      setState(() {
-        splash = false;
-      });
-    });
-    checkConnection();
-    connectionStatus = Connectivity().onConnectivityChanged.listen((event) {
-      setState(() {
-        connectionState = ConnectivityResult.none != event;
-      });
+      if (mounted) {
+        setState(() {
+          splash = false;
+          checkConnection();
+          connectionStatus =
+              Connectivity().onConnectivityChanged.listen((event) {
+            setState(() {
+              connectionState = ConnectivityResult.none != event;
+            });
+          });
+        });
+      }
     });
   }
 

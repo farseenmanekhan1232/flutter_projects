@@ -5,6 +5,7 @@ import 'package:news_app/screens/article/full_article.dart';
 import 'package:news_app/screens/home/widgets/articles_slider.dart';
 import 'package:news_app/screens/splash_screen.dart';
 import 'package:news_app/widgets/image_container.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 class TopHeadlines extends StatefulWidget {
@@ -42,8 +43,9 @@ class _TopHeadlinesState extends State<TopHeadlines> {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (ctx) => FullArticleScreen(
+                      PageTransition(
+                        type: PageTransitionType.bottomToTop,
+                        child: FullArticleScreen(
                             article: articles[0], heading: "Top Headlines"),
                       ),
                     );

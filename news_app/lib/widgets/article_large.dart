@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:news_app/models/article.dart';
 import 'package:news_app/screens/article/full_article.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class ArticleLarge extends StatelessWidget {
@@ -13,11 +14,15 @@ class ArticleLarge extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (ctx) => FullArticleScreen(
-                  article: article,
-                  heading: heading,
-                )));
+        Navigator.of(context).push(
+          PageTransition(
+            type: PageTransitionType.bottomToTop,
+            child: FullArticleScreen(
+              article: article,
+              heading: heading,
+            ),
+          ),
+        );
       },
       child: Container(
         padding: const EdgeInsets.all(10),
