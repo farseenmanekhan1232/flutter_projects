@@ -34,8 +34,8 @@ class _AuthScreenState extends State<AuthScreen> {
   googleLogin() async {
     try {
       print("googleLogin method Called");
-      final _googleSignIn = GoogleSignIn();
-      var result = await _googleSignIn.signIn();
+      final googleSignIn = GoogleSignIn();
+      var result = await googleSignIn.signIn();
       setState(() {
         user = result?.displayName;
       });
@@ -54,11 +54,11 @@ class _AuthScreenState extends State<AuthScreen> {
           children: [
             ElevatedButton(
               onPressed: googleLogin,
-              child: Text('Google Signin'),
+              child: const Text('Google Signin'),
             ),
             ElevatedButton(
               onPressed: facebookLogin,
-              child: Text('Facebook Signin'),
+              child: const Text('Facebook Signin'),
             )
           ],
         ));

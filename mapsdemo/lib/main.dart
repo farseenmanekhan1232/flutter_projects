@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oauth_demo/auth.dart';
+import 'package:mapsdemo/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,11 +7,10 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: AuthScreen(),
+      home: HomeScreen(),
     );
   }
 }
