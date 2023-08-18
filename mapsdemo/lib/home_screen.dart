@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart' show locationFromAddress;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:mapsdemo/convert_latlang_to_address.dart';
+import 'package:location/location.dart';
+import 'package:mapsdemo/search.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,71 +14,114 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final Completer<GoogleMapController> _controller = Completer();
+  LatLng? _locationInput;
+  Completer<GoogleMapController> _controller = Completer();
 
-  final List<Marker> _markers = [];
-  final List<Marker> _list = const [
-    Marker(
-      markerId: MarkerId('3'),
-      position: LatLng(37.42796133580664, -122.095749655962),
-    ),
-    Marker(
-      markerId: MarkerId('4'),
-      position: LatLng(37.43786133580664, -122.085749655962),
-    ),
-    Marker(
-      markerId: MarkerId('5'),
-      position: LatLng(37.42796133580664, -122.085749655962),
-    ),
-    Marker(
-      markerId: MarkerId('6'),
-      position: LatLng(37.42796133580664, -122.075749655962),
-    ),
-    Marker(
-      markerId: MarkerId('1'),
-      position: LatLng(37.40791133580664, -122.085749655962),
-    ),
-    Marker(
-      markerId: MarkerId('2'),
-      position: LatLng(20.5937, 78.9629),
-      infoWindow: InfoWindow(
-        title: "My current position",
+  Location location = Location();
+  List<Marker> _markers = [];
+
+  void _getCurrentLocation() async {
+    bool serviceEnabled;
+    PermissionStatus permissionGranted;
+    LocationData locationData;
+
+    serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        return;
+      }
+    }
+
+    permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
+        return;
+      }
+    }
+
+    locationData = await location.getLocation();
+    final lat = locationData.latitude;
+    final lng = locationData.longitude;
+
+    if (lat == null || lng == null) return;
+
+    setState(() {
+      _locationInput = LatLng(lat, lng);
+      _markers = [
+        Marker(markerId: MarkerId('location'), position: _locationInput!)
+      ];
+    });
+
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(target: _locationInput!, zoom: 14.7),
       ),
-    ),
-  ];
+    );
+  }
 
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
+  void setLocation(String input) async {
+    var response = await locationFromAddress(input);
 
-  @override
-  void initState() {
-    _markers.addAll(_list);
-    super.initState();
+    setState(() {
+      _locationInput = LatLng(response[0].latitude, response[0].longitude);
+
+      _markers = [
+        Marker(markerId: MarkerId('location'), position: _locationInput!)
+      ];
+    });
+
+    if (_locationInput == null) return;
+
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(target: _locationInput!, zoom: 14.7),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Location',
+        ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (ctx) => SearchScreen(setLocation: setLocation)));
+              },
+              icon: const Icon(Icons.search))
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.location_disabled_outlined),
-        onPressed: () async {
-          GoogleMapController controller = await _controller.future;
-          controller.animateCamera(
-            CameraUpdate.newCameraPosition(
-              const CameraPosition(
-                target: LatLng(20.5937, 78.9629),
-                zoom: 5,
+        onPressed: _getCurrentLocation,
+        child: const Icon(Icons.location_searching),
+      ),
+      body: _locationInput == null
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('No Location Selected'),
+                ],
+              ),
+            )
+          : GoogleMap(
+              markers: _markers.isEmpty ? {} : Set.of(_markers),
+              onMapCreated: (GoogleMapController controller) {
+                _controller.complete(controller);
+              },
+              initialCameraPosition: CameraPosition(
+                target: _locationInput!,
+                zoom: 14.7,
               ),
             ),
-          );
-          setState(() {});
-        },
-      ),
-      body: const SafeArea(
-        child: ConvertLatLangToAddress(),
-      ),
     );
   }
 }
