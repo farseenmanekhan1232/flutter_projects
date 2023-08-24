@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import "package:flutter_dotenv/flutter_dotenv.dart";
 import 'package:uuid/uuid.dart';
 import "package:http/http.dart" as http;
 
@@ -21,7 +22,8 @@ class _SearchScreenState extends State<SearchScreen> {
   String _sessionToken = "123";
 
   void _handleInput(String input) async {
-    String kPLACES_API_KEY = "API HERE";
+    await dotenv.load(fileName: "lib/.env");
+    String kPLACES_API_KEY = dotenv.env["API_KEY"];
     String baseURL =
         'https://maps.googleapis.com/maps/api/place/autocomplete/json';
     String request =
