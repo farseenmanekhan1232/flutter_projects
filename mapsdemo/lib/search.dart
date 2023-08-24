@@ -21,7 +21,7 @@ class _SearchScreenState extends State<SearchScreen> {
   String _sessionToken = "123";
 
   void _handleInput(String input) async {
-    String kPLACES_API_KEY = "AIzaSyBg_xjFcqjZ2BZv-NmLqUaxqdvvnyEwq68";
+    String kPLACES_API_KEY = "API HERE";
     String baseURL =
         'https://maps.googleapis.com/maps/api/place/autocomplete/json';
     String request =
