@@ -1,10 +1,17 @@
-# flutter_projects
+# AppaZon Demo
 
 
-### DiceApp [Download Source Code](https://download-directory.github.io/?url=https%3A%2F%2Fgithub.com%2Ffarseenmanekhan1232%2Fflutter_projects%2Ftree%2Fmaster%2Fdiceapp)
 
-### Expense Tracker App [Download Source Code](https://download-directory.github.io/?url=https%3A%2F%2Fgithub.com%2Ffarseenmanekhan1232%2Fflutter_projects%2Ftree%2Fmaster%2Fexpense_tracker)
+https://github.com/farseenmanekhan1232/flutter_projects/assets/67449931/23f5e8af-9f49-4a29-abca-095222e479a7
 
-### Meals App [Download  Source Code](https://download-directory.github.io/?url=https%3A%2F%2Fgithub.com%2Ffarseenmanekhan1232%2Fflutter_projects%2Ftree%2Fmaster%2Fmeals)
 
-### Quiz App [Download Source Code](https://download-directory.github.io/?url=https%3A%2F%2Fgithub.com%2Ffarseenmanekhan1232%2Fflutter_projects%2Ftree%2Fmaster%2Fquiz_app)
+
+# NewsApp Demo
+
+
+
+https://github.com/farseenmanekhan1232/flutter_projects/assets/67449931/6499d8c5-f380-4679-a07a-dedf19a75f7f
+
+
+
+
