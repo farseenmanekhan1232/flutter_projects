@@ -15,17 +15,15 @@ class ProductTile extends StatefulWidget {
 }
 
 class _ProductTileState extends State<ProductTile> {
-  late final actualSize;
-
   @override
   void didChangeDependencies() {
-    actualSize = MediaQuery.of(context).size.width;
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
+      key: UniqueKey(),
       height: 320,
       child: InkWell(
         onTap: () {
@@ -35,7 +33,7 @@ class _ProductTileState extends State<ProductTile> {
             ),
           );
 
-          Timer(Duration(milliseconds: 200), () {
+          Timer(const Duration(milliseconds: 200), () {
             Provider.of<Products>(context, listen: false).onScroll(0, null);
           });
         },
@@ -43,7 +41,7 @@ class _ProductTileState extends State<ProductTile> {
           children: [
             Stack(
               children: [
-                Container(
+                SizedBox(
                   height: 200,
                   width: MediaQuery.of(context).size.width / 2 - 40,
                   child: Stack(
@@ -92,7 +90,7 @@ class _ProductTileState extends State<ProductTile> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  SizedBox(
                     child: Text(
                       widget.product['title'],
                       maxLines: 1,

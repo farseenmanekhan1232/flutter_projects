@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:appazon/widgets/product_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class ProductsList extends StatelessWidget {
   ProductsList({
@@ -20,44 +23,59 @@ class ProductsList extends StatelessWidget {
       future: productsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
-        } else if (snapshot.hasData) {
-          snapshot.data!.shuffle();
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(18),
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                      fontSize: 25,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                      fontWeight: FontWeight.bold),
-                ),
-              ),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(10),
-                child: Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.start,
-                  runAlignment: WrapAlignment.start,
-                  alignment: WrapAlignment.center,
-                  children: [
-                    for (final product in snapshot.data!)
-                      if (exclude == null || product['id'] != exclude)
-                        ProductTile(product: product)
-                  ],
-                ),
-              ),
-            ],
+          return SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+              ],
+            ),
           );
-        } else if (snapshot.hasError) {
-          print(snapshot.error);
-          return const Text('error');
+        } else if (snapshot.hasData) {
+          final data = [];
+          if (snapshot.data.runtimeType == Response) {
+            data.addAll(jsonDecode(snapshot.data.body));
+          } else {
+            data.addAll(snapshot.data);
+          }
+
+          if (data.isEmpty) {
+            return const Text("");
+          }
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(18),
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                        fontSize: 25,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.start,
+                    runAlignment: WrapAlignment.start,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      for (final product in data)
+                        if (exclude == null || product['id'] != exclude)
+                          ProductTile(product: product)
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
         } else {
-          return const Text("nothing ");
+          return const Text('error');
         }
       },
     );

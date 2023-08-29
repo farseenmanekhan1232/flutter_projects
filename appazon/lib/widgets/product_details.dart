@@ -1,11 +1,19 @@
+import 'package:appazon/providers/products.dart';
 import 'package:appazon/widgets/half_icon.dart';
 import 'package:appazon/widgets/product_image_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetails extends StatefulWidget {
-  const ProductDetails({super.key, required this.product});
+  ProductDetails({
+    super.key,
+    required this.product,
+    required this.currentPrice,
+  });
 
   final Map<String, dynamic> product;
+
+  void Function(int) currentPrice;
 
   @override
   State<ProductDetails> createState() => _ProductDetailsState();
@@ -20,6 +28,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   @override
   void initState() {
     price = widget.product['price'];
+    widget.currentPrice(-1);
     super.initState();
   }
 
@@ -159,7 +168,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                   leadingIcon: selected
                       ? IconButton(
                           onPressed: () {
+                            Provider.of<Products>(context, listen: false)
+                                .refreshScroll();
                             _controller.clear();
+                            widget.currentPrice(-1);
                             setState(() {
                               selected = false;
                               price = widget.product['price'];
@@ -184,9 +196,25 @@ class _ProductDetailsState extends State<ProductDetails> {
                   ),
                   hintText: "Others",
                   onSelected: (value) {
+                    Provider.of<Products>(context, listen: false)
+                        .refreshScroll();
                     setState(() {
                       price = widget.product['price'] + value as int;
                       selected = true;
+
+                      int variant = -1;
+
+                      for (int i = 0;
+                          i < widget.product['variants'].length;
+                          i++) {
+                        if (widget.product['variants'][i][0] ==
+                            _controller.text) {
+                          variant = i;
+                          break;
+                        }
+                      }
+
+                      widget.currentPrice(variant);
                     });
                   },
                   initialSelection: null,

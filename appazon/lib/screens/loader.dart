@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
+class Loader extends StatelessWidget {
+  const Loader({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,6 +15,13 @@ class SplashScreen extends StatelessWidget {
               width: 150,
             ),
           ),
+          const SizedBox(
+            width: 30,
+            height: 30,
+            child: CircularProgressIndicator(
+              color: Colors.black,
+            ),
+          )
         ],
       ),
     );

@@ -42,7 +42,7 @@ class _ProductImageSliderState extends State<ProductImageSlider> {
             },
           ),
         ),
-        Container(
+        SizedBox(
           height: 500,
           width: MediaQuery.of(context).size.width,
           child: Column(
@@ -52,11 +52,11 @@ class _ProductImageSliderState extends State<ProductImageSlider> {
                 padding: const EdgeInsets.all(3),
                 margin: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                    color: Color.fromARGB(137, 110, 110, 110),
+                    color: const Color.fromARGB(137, 110, 110, 110),
                     borderRadius: BorderRadius.circular(5)),
                 child: Text(
                   "${_pagePosition + 1} of ${widget.images.length}",
-                  style: TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
                 ),
               ),
             ],
