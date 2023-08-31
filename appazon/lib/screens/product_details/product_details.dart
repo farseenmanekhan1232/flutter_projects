@@ -1,7 +1,8 @@
 import 'package:appazon/providers/products.dart';
 import 'package:appazon/screens/cart/cart.dart';
+import 'package:appazon/screens/checkout/address.dart';
 import 'package:appazon/screens/wishlist/wistlist.dart';
-import 'package:appazon/widgets/product_details.dart';
+import 'package:appazon/widgets/product_overview.dart';
 import 'package:appazon/widgets/products_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,17 +24,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
 
   late final Animation<double> _animation;
 
-  late int _currentPrice;
-
-  // @override
-  // void didChangeDependencies() {
-
-  //   // _animationController.reset();
-  //   super.didChangeDependencies();
-  // }
+  late int _currentVariant;
 
   @override
-  void didChangeDependencies() {
+  void initState() {
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
@@ -47,7 +41,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
 
     _controller = ScrollController(
       initialScrollOffset: 0,
-      keepScrollOffset: true,
     );
 
     _controller.addListener(
@@ -59,11 +52,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
 
     _animationController.forward();
 
-    super.didChangeDependencies();
+    super.initState();
   }
 
   void _getCurrentPrice(int variant) {
-    _currentPrice = variant;
+    _currentVariant = variant;
   }
 
   @override
@@ -76,18 +69,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      // extendBodyBehindAppBar: true,
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
+        elevation: 0.7,
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
           icon: const Icon(
             Icons.arrow_back_ios,
-            color: Colors.black,
-            shadows: [Shadow(color: Colors.black)],
+            color: Color.fromARGB(255, 0, 0, 0),
           ),
         ),
         title: IconButton(
@@ -95,29 +87,37 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
             Navigator.of(context).pushReplacementNamed('/home');
           },
           icon: const Icon(
-            Icons.home_outlined,
-            color: Colors.black,
+            Icons.home_filled,
+            color: Color.fromARGB(255, 29, 29, 29),
           ),
         ),
         actions: [
           GestureDetector(
             onLongPress: () {
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (ctx) => const WishlistScreen()));
+                MaterialPageRoute(
+                  builder: (ctx) => const WishlistScreen(),
+                ),
+              );
             },
             child: IconButton(
-                onPressed: () {
-                  Provider.of<Products>(context, listen: false)
-                      .toggleWishList(widget.product);
-                },
-                icon: Consumer<Products>(
-                  builder: (context, value, child) => Icon(
+              onPressed: () {
+                Provider.of<Products>(context, listen: false)
+                    .toggleWishList(widget.product);
+              },
+              icon: Consumer<Products>(
+                builder: (context, value, child) =>
                     value.wishlist.containsKey(widget.product['id'].toString())
-                        ? Icons.favorite_rounded
-                        : Icons.favorite_border_rounded,
-                    color: Colors.black,
-                  ),
-                )),
+                        ? const Icon(
+                            Icons.favorite_rounded,
+                            color: Color.fromARGB(255, 255, 65, 52),
+                          )
+                        : const Icon(
+                            Icons.favorite_border_rounded,
+                            color: Colors.black,
+                          ),
+              ),
+            ),
           ),
         ],
       ),
@@ -127,7 +127,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
             controller: _controller,
             child: Column(
               children: [
-                ProductDetails(
+                ProductOverview(
                     product: widget.product, currentPrice: _getCurrentPrice),
                 Container(
                   width: MediaQuery.of(context).size.width,
@@ -245,26 +245,26 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                                   ),
                                   InkWell(
                                     onTap: value.cart.containsKey(
-                                      "${widget.product['id'].toString()}:$_currentPrice",
+                                      "${widget.product['id'].toString()}:$_currentVariant",
                                     )
                                         ? () {
                                             Provider.of<Products>(context,
                                                     listen: false)
                                                 .removeFromCart(
-                                                    "${widget.product['id'].toString()}:$_currentPrice");
+                                                    "${widget.product['id'].toString()}:$_currentVariant");
                                           }
                                         : () {
                                             Provider.of<Products>(context,
                                                     listen: false)
                                                 .addToCart(widget.product,
-                                                    _currentPrice);
+                                                    _currentVariant);
                                           },
                                     child: Container(
                                       height: 50,
                                       width: 50,
                                       decoration: BoxDecoration(
                                         color: value.cart.containsKey(
-                                          "${widget.product['id'].toString()}:$_currentPrice",
+                                          "${widget.product['id'].toString()}:$_currentVariant",
                                         )
                                             ? const Color.fromARGB(
                                                 255, 255, 130, 130)
@@ -281,7 +281,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                                       ),
                                       child: Icon(
                                         value.cart.containsKey(
-                                                "${widget.product['id'].toString()}:$_currentPrice")
+                                                "${widget.product['id'].toString()}:$_currentVariant")
                                             ? Icons
                                                 .remove_shopping_cart_outlined
                                             : Icons.add_shopping_cart_outlined,
@@ -302,41 +302,60 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Container(
-                                margin: const EdgeInsets.only(
-                                    left: 5, right: 5, bottom: 10),
-                                height: 50,
-                                width:
-                                    MediaQuery.of(context).size.width / 2 - 60,
-                                decoration: BoxDecoration(
-                                  color:
-                                      const Color.fromARGB(255, 114, 192, 255),
-                                  borderRadius: BorderRadius.circular(15),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                        color: Color.fromARGB(43, 0, 0, 0),
-                                        spreadRadius: 1,
-                                        blurRadius: 1)
-                                  ],
-                                ),
-                                alignment: Alignment.center,
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Buy Now',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
+                              InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (ctx) => CheckoutScreen(
+                                          direct: true,
+                                          product: {
+                                            "${widget.product['id'].toString()}":
+                                                {
+                                              "product": widget.product,
+                                              "selectedVariant":
+                                                  _currentVariant,
+                                              "quantity": 1,
+                                            }
+                                          }),
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(
+                                      left: 5, right: 5, bottom: 10),
+                                  height: 50,
+                                  width: MediaQuery.of(context).size.width / 2 -
+                                      60,
+                                  decoration: BoxDecoration(
+                                    color: const Color.fromARGB(
+                                        255, 114, 192, 255),
+                                    borderRadius: BorderRadius.circular(15),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                          color: Color.fromARGB(43, 0, 0, 0),
+                                          spreadRadius: 1,
+                                          blurRadius: 1)
+                                    ],
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Buy Now',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(width: 10),
-                                    Icon(
-                                      Icons.shopping_bag_outlined,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                  ],
+                                      SizedBox(width: 10),
+                                      Icon(
+                                        Icons.shopping_bag_outlined,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                               InkWell(
@@ -403,19 +422,19 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                               ),
                               InkWell(
                                 onTap: value.cart.containsKey(
-                                  "${widget.product['id'].toString()}:$_currentPrice",
+                                  "${widget.product['id'].toString()}:$_currentVariant",
                                 )
                                     ? () {
                                         Provider.of<Products>(context,
                                                 listen: false)
                                             .removeFromCart(
-                                                "${widget.product['id'].toString()}:$_currentPrice");
+                                                "${widget.product['id'].toString()}:$_currentVariant");
                                       }
                                     : () {
                                         Provider.of<Products>(context,
                                                 listen: false)
-                                            .addToCart(
-                                                widget.product, _currentPrice);
+                                            .addToCart(widget.product,
+                                                _currentVariant);
                                       },
                                 child: Container(
                                   height: 50,
@@ -425,7 +444,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                                       left: 5, right: 5, bottom: 10),
                                   decoration: BoxDecoration(
                                     color: value.cart.containsKey(
-                                      "${widget.product['id'].toString()}:$_currentPrice",
+                                      "${widget.product['id'].toString()}:$_currentVariant",
                                     )
                                         ? const Color.fromARGB(
                                             255, 255, 130, 130)
@@ -444,7 +463,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                                     children: [
                                       Text(
                                         value.cart.containsKey(
-                                          "${widget.product['id'].toString()}:$_currentPrice",
+                                          "${widget.product['id'].toString()}:$_currentVariant",
                                         )
                                             ? "Remove"
                                             : 'Add to Cart',
@@ -458,7 +477,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                                       const SizedBox(width: 10),
                                       Icon(
                                         value.cart.containsKey(
-                                          "${widget.product['id'].toString()}:$_currentPrice",
+                                          "${widget.product['id'].toString()}:$_currentVariant",
                                         )
                                             ? Icons
                                                 .remove_shopping_cart_outlined

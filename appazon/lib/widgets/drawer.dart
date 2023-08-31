@@ -1,8 +1,6 @@
-import 'package:appazon/providers/user.dart';
 import 'package:appazon/screens/wishlist/wistlist.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({super.key});
@@ -23,6 +21,7 @@ class DrawerWidget extends StatelessWidget {
                 Image.asset(
                   'assets/images/logo.png',
                   width: 70,
+                  fit: BoxFit.cover,
                 ),
                 const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,75 +84,83 @@ class DrawerWidget extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    FirebaseAuth.instance.currentUser!.photoURL ?? "",
-                    width: 70,
+            Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.network(
+                          FirebaseAuth.instance.currentUser!.photoURL ?? "",
+                          width: 70,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            FirebaseAuth.instance.currentUser!.displayName ??
+                                "",
+                            style: const TextStyle(
+                              fontSize: 12,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.clip,
+                          ),
+                          Text(
+                            FirebaseAuth.instance.currentUser!.email ?? " - ",
+                            style: const TextStyle(
+                              fontSize: 10,
+                            ),
+                          ),
+                          Text(
+                            FirebaseAuth.instance.currentUser!.phoneNumber ??
+                                "",
+                            style: const TextStyle(
+                              fontSize: 10,
+                            ),
+                          )
+                        ],
+                      )
+                    ],
                   ),
-                ),
-                Column(
-                  children: [
-                    Text(
-                      FirebaseAuth.instance.currentUser!.displayName ?? "",
-                      style: const TextStyle(
-                        fontSize: 12,
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ListTile(
+                    onTap: () {
+                      FirebaseAuth.instance.signOut();
+
+                      Navigator.of(context).pushReplacementNamed('/welcome');
+                    },
+                    title: Container(
+                      padding: const EdgeInsets.only(
+                          left: 20, right: 20, top: 10, bottom: 10),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        border: Border.all(
+                            width: 1,
+                            color: const Color.fromARGB(255, 85, 85, 85)),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.clip,
-                    ),
-                    Text(
-                      FirebaseAuth.instance.currentUser!.email ?? "",
-                      style: const TextStyle(
-                        fontSize: 10,
-                      ),
-                    ),
-                    Text(
-                      FirebaseAuth.instance.currentUser!.phoneNumber ?? "",
-                      style: const TextStyle(
-                        fontSize: 10,
-                      ),
-                    )
-                  ],
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            ListTile(
-              onTap: () {
-                FirebaseAuth.instance.signOut();
-                Provider.of<AuthenticatedUser>(context, listen: false)
-                    .signOut();
-                Navigator.of(context).pushReplacementNamed('/welcome');
-              },
-              title: Container(
-                margin: const EdgeInsets.only(
-                    left: 20, right: 20, top: 10, bottom: 40),
-                padding: const EdgeInsets.only(
-                    left: 20, right: 20, top: 10, bottom: 10),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 255, 255, 255),
-                  border: Border.all(
-                      width: 1, color: const Color.fromARGB(255, 85, 85, 85)),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'SignOut',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 31, 31, 31),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Sign out',
+                            style: TextStyle(
+                              color: Color.fromARGB(255, 31, 31, 31),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(

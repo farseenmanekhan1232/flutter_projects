@@ -8,9 +8,10 @@ import "package:http/http.dart" as http;
 
 class Products extends ChangeNotifier {
   List<String> _categories = [];
-  Map<String, List<Map<String, dynamic>>> _products = {};
+  final Map<String, List<Map<String, dynamic>>> _products = {};
   Map<String, Map<String, dynamic>> _wishlist = {};
   Map<String, Map<String, dynamic>> _cart = {};
+  List<String> savedLocations = [];
 
   double _size = 0;
   bool scrolled = false;
@@ -24,12 +25,13 @@ class Products extends ChangeNotifier {
   Future<List<String>> loadCategories() async {
     if (_categories.isNotEmpty) return _categories;
 
-    var response = await http
-        .get(Uri.parse("https://ecommerce-dummy-data.onrender.com/categories"));
+    var response = await http.get(
+      Uri.parse("https://ecommerce-dummy-data.onrender.com/categories"),
+    );
 
     List<String> data = List.from(jsonDecode(response.body)['categories']);
 
-    _categories.addAll(data);
+    _categories = data;
     notifyListeners();
     return _categories;
   }
@@ -160,7 +162,7 @@ class Products extends ChangeNotifier {
           .collection('cart')
           .doc(id);
 
-      await cartItem.delete();
+      await cartItem;
 
       _cart.remove(id);
     } catch (e) {
@@ -169,6 +171,26 @@ class Products extends ChangeNotifier {
 
     _cart.remove(id);
     notifyListeners();
+  }
+
+  void clearCart() async {
+    try {
+      CollectionReference cart = FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('cart');
+
+      await cart.get().then((snapshot) {
+        for (DocumentSnapshot ds in snapshot.docs) {
+          ds.reference.delete();
+        }
+      });
+
+      _cart.clear();
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   void increaseQuantity(String id) async {
@@ -257,5 +279,57 @@ class Products extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  Future saveLocation(String input) async {
+    return await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({
+      'locations': FieldValue.arrayUnion([input])
+    });
+  }
+
+  Future<List<String>> loadSavedLocations() async {
+    List data = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((data) {
+      return (data['locations']);
+    });
+
+    return List.from(data);
+  }
+
+  Future placeOrder(Map<String, dynamic>? product, double price,
+      String paymentMedhod, String location) async {
+    final date = DateTime.now();
+
+    if (product != null) {
+      return await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('orders')
+          .doc(date.toString())
+          .set({
+        "paymentMethod": paymentMedhod,
+        "products": {jsonEncode(product)},
+        "price": price,
+        "location": location
+      });
+    } else {
+      return await FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('orders')
+          .doc(date.toString())
+          .set({
+        "paymentMethod": paymentMedhod,
+        "products": jsonEncode({..._cart}),
+        "price": price,
+        "location": location
+      });
+    }
   }
 }

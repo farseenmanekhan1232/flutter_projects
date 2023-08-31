@@ -17,7 +17,7 @@ class _ProductImageSliderState extends State<ProductImageSlider> {
     return Stack(
       children: [
         SizedBox(
-          height: 500,
+          height: 400,
           width: MediaQuery.of(context).size.width,
           child: PageView.builder(
             itemCount: widget.images.length,
@@ -43,7 +43,7 @@ class _ProductImageSliderState extends State<ProductImageSlider> {
           ),
         ),
         SizedBox(
-          height: 500,
+          height: 400,
           width: MediaQuery.of(context).size.width,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,

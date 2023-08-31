@@ -4,8 +4,8 @@ import 'package:appazon/widgets/product_image_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ProductDetails extends StatefulWidget {
-  ProductDetails({
+class ProductOverview extends StatefulWidget {
+  const ProductOverview({
     super.key,
     required this.product,
     required this.currentPrice,
@@ -13,13 +13,13 @@ class ProductDetails extends StatefulWidget {
 
   final Map<String, dynamic> product;
 
-  void Function(int) currentPrice;
+  final void Function(int) currentPrice;
 
   @override
-  State<ProductDetails> createState() => _ProductDetailsState();
+  State<ProductOverview> createState() => _ProductOverviewState();
 }
 
-class _ProductDetailsState extends State<ProductDetails> {
+class _ProductOverviewState extends State<ProductOverview> {
   late int price;
   bool selected = false;
 
@@ -170,7 +170,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                           onPressed: () {
                             Provider.of<Products>(context, listen: false)
                                 .refreshScroll();
-                            _controller.clear();
                             widget.currentPrice(-1);
                             setState(() {
                               selected = false;

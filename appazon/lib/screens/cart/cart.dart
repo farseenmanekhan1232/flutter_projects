@@ -1,5 +1,6 @@
 import 'package:appazon/providers/products.dart';
 import 'package:appazon/screens/cart/widgets/cart_item.dart';
+import 'package:appazon/screens/checkout/address.dart';
 import 'package:appazon/screens/product_details/product_details.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -67,7 +68,10 @@ class CartScreen extends StatelessWidget {
                                     product: product['product'])));
                           },
                           child: CartItem(product: product),
-                        )
+                        ),
+                      const SizedBox(
+                        height: 100,
+                      )
                     ],
                   ),
                 ),
@@ -85,7 +89,7 @@ class CartScreen extends StatelessWidget {
                           margin: const EdgeInsets.only(
                               left: 5, right: 5, bottom: 10),
                           decoration: BoxDecoration(
-                            color: Color.fromRGBO(224, 224, 224, 1),
+                            color: const Color.fromRGBO(224, 224, 224, 1),
                             boxShadow: const [
                               BoxShadow(
                                   color: Color.fromARGB(43, 0, 0, 0),
@@ -110,44 +114,53 @@ class CartScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        Container(
-                          height: 50,
-                          width: MediaQuery.of(context).size.width / 2 - 60,
-                          margin: const EdgeInsets.only(
-                              left: 10, right: 10, bottom: 10),
-                          decoration: BoxDecoration(
-                            color: Color.fromRGBO(0, 189, 79, 1),
-                            boxShadow: const [
-                              BoxShadow(
-                                  color: Color.fromARGB(43, 0, 0, 0),
-                                  spreadRadius: 1,
-                                  blurRadius: 1)
-                            ],
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Checkout',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: Color.fromARGB(255, 255, 255, 255),
-                                  fontSize: 16,
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (ctx) => CheckoutScreen(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: 50,
+                            width: MediaQuery.of(context).size.width / 2 - 60,
+                            margin: const EdgeInsets.only(
+                                left: 10, right: 10, bottom: 10),
+                            decoration: BoxDecoration(
+                              color: const Color.fromRGBO(0, 189, 79, 1),
+                              boxShadow: const [
+                                BoxShadow(
+                                    color: Color.fromARGB(43, 0, 0, 0),
+                                    spreadRadius: 1,
+                                    blurRadius: 1)
+                              ],
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Checkout',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Color.fromARGB(255, 255, 255, 255),
+                                    fontSize: 16,
+                                  ),
                                 ),
-                              ),
-                              Icon(
-                                Icons.arrow_back_ios,
-                                textDirection: TextDirection.rtl,
-                                color: Colors.white,
-                                size: 25,
-                              ),
-                            ],
+                                Icon(
+                                  Icons.arrow_back_ios,
+                                  textDirection: TextDirection.rtl,
+                                  color: Colors.white,
+                                  size: 25,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ],

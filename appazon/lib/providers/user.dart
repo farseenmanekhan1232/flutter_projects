@@ -1,19 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:twitter_login/twitter_login.dart';
 
-class AuthenticatedUser extends ChangeNotifier {
-  UserCredential? _user;
-
-  bool loading = false;
-
-  void loadUser(UserCredential user) {
-    _user = user;
-    notifyListeners();
-  }
-
+class AuthenticatedUser {
   Future<UserCredential?> googleAuth() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -25,34 +15,29 @@ class AuthenticatedUser extends ChangeNotifier {
       idToken: googleAuth?.idToken,
     );
 
-    _user = await FirebaseAuth.instance.signInWithCredential(credential);
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
 
-    notifyListeners();
+  Future<UserCredential>? facebookAuth() async {
+    // Trigger the sign-in flow
+    final LoginResult loginResult = await FacebookAuth.instance.login();
 
-    return _user;
+    // Create a credential from the access token
+    final OAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance
+        .signInWithCredential(facebookAuthCredential);
   }
 
   Future<UserCredential?> twitterAuth() async {
     TwitterAuthProvider twitterProvider = TwitterAuthProvider();
-    try {
-      if (kIsWeb) {
-        _user = await FirebaseAuth.instance.signInWithPopup(twitterProvider);
-      } else {
-        _user = await FirebaseAuth.instance.signInWithProvider(twitterProvider);
-      }
-    } catch (e) {
-      print(e);
+
+    if (kIsWeb) {
+      return await FirebaseAuth.instance.signInWithPopup(twitterProvider);
+    } else {
+      return await FirebaseAuth.instance.signInWithProvider(twitterProvider);
     }
-
-    return _user;
-  }
-
-  void isLoading(bool state) {
-    loading = state;
-  }
-
-  void signOut() async {
-    _user = null;
-    notifyListeners();
   }
 }

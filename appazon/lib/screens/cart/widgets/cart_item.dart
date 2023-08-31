@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CartItem extends StatelessWidget {
-  CartItem({super.key, required this.product});
+  CartItem({super.key, required this.product, this.checkout = false});
 
   final Map<String, dynamic> product;
   late final productDetails = product['product'];
   late final quantity = product['quantity'];
   late final selectedVariant = product['selectedVariant'];
-
+  final bool checkout;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -19,7 +19,7 @@ class CartItem extends StatelessWidget {
         color: const Color.fromARGB(255, 240, 240, 240),
         borderRadius: BorderRadius.circular(5),
       ),
-      margin: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(bottom: 15),
       child: Column(
         children: [
           Row(
@@ -44,7 +44,7 @@ class CartItem extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        productDetails['title'],
+                        "${productDetails['title']} ${selectedVariant != -1 ? ' (${productDetails['variants'][selectedVariant][0]})' : ""}",
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -72,45 +72,48 @@ class CartItem extends StatelessWidget {
                   ),
                 ),
               ),
-              IconButton(
-                onPressed: () {
-                  Provider.of<Products>(context, listen: false).removeFromCart(
-                    "${productDetails['id']}:$selectedVariant",
-                  );
-                },
-                icon: const Icon(
-                  Icons.delete,
+              if (!checkout)
+                IconButton(
+                  onPressed: () {
+                    Provider.of<Products>(context, listen: false)
+                        .removeFromCart(
+                      "${productDetails['id']}:$selectedVariant",
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.delete,
+                  ),
                 ),
-              ),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                onPressed: () {
-                  Provider.of<Products>(context, listen: false)
-                      .decreateQuantity(
-                    "${productDetails['id']}:$selectedVariant",
-                  );
-                },
-                icon: const Icon(Icons.remove_circle),
-              ),
-              Text(
-                "$quantity",
-                overflow: TextOverflow.ellipsis,
-              ),
-              IconButton(
-                onPressed: () {
-                  Provider.of<Products>(context, listen: false)
-                      .increaseQuantity(
-                    "${productDetails['id']}:$selectedVariant",
-                  );
-                },
-                icon: const Icon(Icons.add_circle),
-              ),
-            ],
-          )
+          if (!checkout)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Provider.of<Products>(context, listen: false)
+                        .decreateQuantity(
+                      "${productDetails['id']}:$selectedVariant",
+                    );
+                  },
+                  icon: const Icon(Icons.remove_circle),
+                ),
+                Text(
+                  "$quantity",
+                  overflow: TextOverflow.ellipsis,
+                ),
+                IconButton(
+                  onPressed: () {
+                    Provider.of<Products>(context, listen: false)
+                        .increaseQuantity(
+                      "${productDetails['id']}:$selectedVariant",
+                    );
+                  },
+                  icon: const Icon(Icons.add_circle),
+                ),
+              ],
+            )
         ],
       ),
     );

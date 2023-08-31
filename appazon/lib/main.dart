@@ -1,7 +1,6 @@
 import 'package:appazon/appazon.dart';
 import 'package:appazon/firebase_options.dart';
 import 'package:appazon/providers/products.dart';
-import 'package:appazon/providers/user.dart';
 import 'package:appazon/screens/auth/welcome.dart';
 import 'package:appazon/screens/home/home.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -34,9 +33,6 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (context) => Products(),
         ),
-        ChangeNotifierProvider(
-          create: (context) => AuthenticatedUser(),
-        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

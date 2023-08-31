@@ -29,9 +29,10 @@ class CategoryScreen extends StatelessWidget {
           children: [
             const SizedBox(height: 50),
             ProductsList(
-                productsFuture:
-                    Provider.of<Products>(context).loadProducts(category),
-                title: "Hot Deals on ${category.toUpperCase()}"),
+              productsFuture:
+                  Provider.of<Products>(context).loadProducts(category),
+              title: "🔥 Hot Deals on ${category.toUpperCase()}",
+            ),
           ],
         ),
       ),

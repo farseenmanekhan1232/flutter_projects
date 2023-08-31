@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:appazon/screens/auth/auth.dart';
-import 'package:appazon/widgets/products_list.dart';
 import 'package:flutter/material.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -71,7 +70,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 20),
                   height: 60,
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(176, 0, 0, 0),
+                    color: const Color.fromARGB(75, 0, 0, 0),
                     border: Border.all(
                       width: 1,
                       color: const Color.fromARGB(99, 248, 248, 248),

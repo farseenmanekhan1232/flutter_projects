@@ -45,14 +45,14 @@ class ProductsList extends StatelessWidget {
           }
           return SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
                   padding: const EdgeInsets.all(18),
                   child: Text(
                     title,
                     style: const TextStyle(
-                        fontSize: 25,
+                        fontSize: 20,
                         color: Color.fromARGB(255, 0, 0, 0),
                         fontWeight: FontWeight.bold),
                   ),

@@ -43,6 +43,14 @@ dependencies:
   flutter_dotenv: ^5.1.0
   google_sign_in: ^6.1.4
   twitter_login: ^4.4.2
+  flutter_facebook_auth: ^6.0.1
+  google_maps_flutter: ^2.4.1
+  geocoding: ^2.1.0
+  geolocator: ^10.0.0
+  location: ^5.0.3
+  uuid: ^3.0.7
+  dotenv: ^4.1.0
+  date_format: ^2.0.7
 
 dev_dependencies:
   flutter_test:
@@ -74,6 +82,12 @@ flutter:
     - assets/images/google.png
     - assets/images/x.png
     - assets/images/facebook.png
+
+    - assets/images/gpay.png
+    - assets/images/paytm.png
+    - assets/images/phonepe.png
+
+    - lib/screens/checkout/widgets/.env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

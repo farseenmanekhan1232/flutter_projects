@@ -37,6 +37,7 @@ class _SearchState extends State<Search> {
                 }
               },
               decoration: InputDecoration(
+                hintText: "Search Products",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
