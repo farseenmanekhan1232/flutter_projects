@@ -119,9 +119,9 @@ class _AuthScreenState extends State<AuthScreen> {
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
                             decoration: const InputDecoration(
+                              labelText: 'Email Address',
                               border: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.black)),
-                              labelText: 'Email Address',
                               floatingLabelStyle:
                                   TextStyle(color: Colors.black),
                             ),

@@ -61,9 +61,7 @@ class WelcomeScreen extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (ctx) => AuthScreen(
-                        login: false,
-                      ),
+                      builder: (ctx) => AuthScreen(),
                     ),
                   );
                 },
@@ -113,10 +111,8 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (ctx) => AuthScreen(
-                                login: true,
-                              )));
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (ctx) => AuthScreen()));
                     },
                     child: const Text(
                       "Login",

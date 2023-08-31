@@ -246,7 +246,7 @@ class _CustomizeScreenState extends State<CustomizeScreen> {
                           validator: (value) {
                             RegExp regex = RegExp(
                                 r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
-                            if (value.isEmpty) {
+                            if (value == null || value.isEmpty) {
                               return 'Please enter password';
                             } else {
                               if (!regex.hasMatch(value)) {

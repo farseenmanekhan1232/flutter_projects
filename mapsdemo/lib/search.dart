@@ -23,7 +23,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _handleInput(String input) async {
     await dotenv.load(fileName: "lib/.env");
-    String kPLACES_API_KEY = dotenv.env["API_KEY"];
+    String kPLACES_API_KEY = dotenv.env["API_KEY"]!;
     String baseURL =
         'https://maps.googleapis.com/maps/api/place/autocomplete/json';
     String request =

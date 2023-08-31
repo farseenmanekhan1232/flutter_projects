@@ -113,6 +113,16 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             )
           : GoogleMap(
+              onTap: (latlng) {
+                setState(() {
+                  _markers.clear();
+
+                  _markers.add(Marker(
+                    markerId: const MarkerId('Current Location'),
+                    position: latlng,
+                  ));
+                });
+              },
               markers: _markers.isEmpty ? {} : Set.of(_markers),
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
