@@ -1,3 +1,4 @@
+import 'package:appazon/screens/orders/orders.dart';
 import 'package:appazon/screens/wishlist/wistlist.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -77,6 +78,46 @@ class DrawerWidget extends StatelessWidget {
                     ),
                     Icon(
                       Icons.favorite_rounded,
+                      color: Colors.white,
+                    )
+                  ],
+                ),
+              ),
+            ),
+            ListTile(
+              onTap: () async {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (ctx) => const OrdersScreen(),
+                  ),
+                );
+              },
+              title: Container(
+                margin: const EdgeInsets.only(
+                    left: 20, right: 20, top: 10, bottom: 10),
+                padding: const EdgeInsets.only(
+                    left: 20, right: 20, top: 10, bottom: 10),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 56, 56, 56),
+                  border: Border.all(
+                      width: 1, color: const Color.fromARGB(255, 85, 85, 85)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Orders',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 5,
+                    ),
+                    Icon(
+                      Icons.shopping_basket,
                       color: Colors.white,
                     )
                   ],

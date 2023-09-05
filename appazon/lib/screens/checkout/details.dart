@@ -24,6 +24,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
   int paymentMode = -1;
   String paymentMethod = "";
+
+  final TextEditingController _controller = TextEditingController();
+
+  String phoneNumber = "";
+
   @override
   void initState() {
     if (widget.savedLocation != null) {
@@ -32,6 +37,12 @@ class _DetailsScreenState extends State<DetailsScreen> {
       });
     }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -130,6 +141,39 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                   )
                             : const SizedBox()
                       ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Text(
+                    "Phone no : ",
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Form(
+                    autovalidateMode: AutovalidateMode.always,
+                    child: TextFormField(
+                      controller: _controller,
+                      validator: (value) {
+                        if (phoneNumber.isEmpty) {
+                          return "Enter valid phone number";
+                        } else if (phoneNumber[0] != '+') {
+                          return "Enter country code first";
+                        } else if (phoneNumber.length < 9) {
+                          return "Enter valid phone number";
+                        }
+                        return null;
+                      },
+                      onChanged: (value) {
+                        setState(() {
+                          phoneNumber = value;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -329,7 +373,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                 product: widget.product,
                                 price: price,
                                 paymentMethod: paymentMethod,
-                                location: widget.location),
+                                location: widget.location,
+                                phoneNumber: phoneNumber),
                           ),
                         );
                       }

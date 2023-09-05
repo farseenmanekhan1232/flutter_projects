@@ -1,4 +1,4 @@
-import "package:appazon/providers/user.dart";
+import 'package:appazon/user.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import 'package:flutter/material.dart';
 

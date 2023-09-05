@@ -191,9 +191,9 @@ class _GoogleMapsWidgetState extends State<GoogleMapsWidget> {
                         autofocus: true,
                         onChanged: _handleInput,
                         decoration: const InputDecoration(
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                        ),
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            hintText: "Search"),
                       ),
                     ),
                   ),

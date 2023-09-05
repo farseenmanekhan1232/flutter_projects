@@ -1,9 +1,7 @@
-import 'package:appazon/providers/products.dart';
 import 'package:appazon/screens/checkout/details.dart';
 import 'package:appazon/screens/checkout/saved_locations.dart';
 import 'package:appazon/screens/checkout/widgets/google_maps.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CheckoutScreen extends StatefulWidget {
   CheckoutScreen({super.key, this.direct = false, this.product});

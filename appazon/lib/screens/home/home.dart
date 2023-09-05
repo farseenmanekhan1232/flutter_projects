@@ -79,8 +79,19 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 IconButton(
                   onPressed: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (ctx) => CartScreen()));
+                    showModalBottomSheet(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height - 150,
+                      ),
+                      enableDrag: true,
+                      showDragHandle: true,
+                      isScrollControlled: true,
+                      context: context,
+                      builder: (context) => SizedBox(
+                        height: MediaQuery.of(context).size.height - 150,
+                        child: CartScreen(),
+                      ),
+                    );
                   },
                   icon: const Icon(
                     Icons.shopping_cart,

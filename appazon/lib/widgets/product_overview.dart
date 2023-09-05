@@ -175,6 +175,7 @@ class _ProductOverviewState extends State<ProductOverview> {
                               selected = false;
                               price = widget.product['price'];
                             });
+                            _controller.clear();
                           },
                           icon: const Icon(
                             Icons.clear,
@@ -216,7 +217,6 @@ class _ProductOverviewState extends State<ProductOverview> {
                       widget.currentPrice(variant);
                     });
                   },
-                  initialSelection: null,
                   dropdownMenuEntries: [
                     for (final variant in widget.product['variants'])
                       DropdownMenuEntry(label: variant[0], value: variant[1])

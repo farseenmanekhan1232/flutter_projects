@@ -13,6 +13,8 @@ class Products extends ChangeNotifier {
   Map<String, Map<String, dynamic>> _cart = {};
   List<String> savedLocations = [];
 
+  final Map<String, dynamic> _orders = {};
+
   double _size = 0;
   bool scrolled = false;
 
@@ -21,6 +23,7 @@ class Products extends ChangeNotifier {
   get categories => _categories;
   get cart => _cart;
   get wishlist => _wishlist;
+  get orders => _orders;
 
   Future<List<String>> loadCategories() async {
     if (_categories.isNotEmpty) return _categories;
@@ -118,7 +121,6 @@ class Products extends ChangeNotifier {
 
   void addToCart(Map<String, dynamic> product, int variant) async {
     if (_cart.containsKey("${product['id']}:$variant")) return;
-
     try {
       if (FirebaseAuth.instance.currentUser != null) {
         await FirebaseFirestore.instance
@@ -162,7 +164,7 @@ class Products extends ChangeNotifier {
           .collection('cart')
           .doc(id);
 
-      await cartItem;
+      await cartItem.delete();
 
       _cart.remove(id);
     } catch (e) {
@@ -186,7 +188,8 @@ class Products extends ChangeNotifier {
         }
       });
 
-      _cart.clear();
+      _cart = {};
+
       notifyListeners();
     } catch (e) {
       rethrow;
@@ -194,37 +197,15 @@ class Products extends ChangeNotifier {
   }
 
   void increaseQuantity(String id) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .collection('cart')
-          .doc(id)
-          .update({"quantity": _cart[id]!['quantity'] + 1});
-
-      _cart[id]!['quantity'] = _cart[id]!['quantity'] + 1;
-      notifyListeners();
-    } catch (e) {
-      rethrow;
-    }
+    _cart[id]!['quantity'] = _cart[id]!['quantity'] + 1;
+    notifyListeners();
   }
 
   void decreateQuantity(String id) async {
-    try {
-      if (_cart[id]!['quantity'] > 1) {
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .collection('cart')
-            .doc(id)
-            .update({"quantity": _cart[id]!['quantity'] - 1});
-
-        _cart[id]!['quantity'] = _cart[id]!['quantity'] - 1;
-      } else {
-        removeFromCart(id);
-      }
-    } catch (e) {
-      rethrow;
+    if (_cart[id]!['quantity'] > 1) {
+      _cart[id]!['quantity'] = _cart[id]!['quantity'] - 1;
+    } else {
+      removeFromCart(id);
     }
 
     notifyListeners();
@@ -303,20 +284,25 @@ class Products extends ChangeNotifier {
   }
 
   Future placeOrder(Map<String, dynamic>? product, double price,
-      String paymentMedhod, String location) async {
+      String paymentMedhod, String location, String phoneNumber) async {
     final date = DateTime.now();
 
     if (product != null) {
-      return await FirebaseFirestore.instance
+      return FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .collection('orders')
           .doc(date.toString())
           .set({
         "paymentMethod": paymentMedhod,
-        "products": {jsonEncode(product)},
+        "products": jsonEncode(Map.from(product)),
         "price": price,
-        "location": location
+        "location": location,
+        "datetime": DateTime.now(),
+        "phoneNumber": phoneNumber
+      }).then((value) {
+        removeFromCart(product.entries.first.key);
+        return value;
       });
     } else {
       return await FirebaseFirestore.instance
@@ -326,10 +312,36 @@ class Products extends ChangeNotifier {
           .doc(date.toString())
           .set({
         "paymentMethod": paymentMedhod,
-        "products": jsonEncode({..._cart}),
+        "products": jsonEncode(Map.from(_cart)),
         "price": price,
-        "location": location
+        "location": location,
+        "datetime": DateTime.now(),
+        "phoneNumber": phoneNumber
       });
     }
+  }
+
+  Future<Map<String, dynamic>> loadOrders() {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('orders')
+        .orderBy("datetime", descending: true)
+        .get()
+        .then(
+      (ordersRef) {
+        for (final doc in ordersRef.docs) {
+          _orders[doc.id.toString()] = {
+            "products": json.decode(doc.data()['products']),
+            "price": doc.data()['price'],
+            "location": doc.data()['location']
+          };
+        }
+        return _orders;
+      },
+    ).then((value) {
+      notifyListeners();
+      return value;
+    });
   }
 }

@@ -161,9 +161,23 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (ctx) => CartScreen(),
+                                      showModalBottomSheet(
+                                        constraints: BoxConstraints(
+                                          maxHeight: MediaQuery.of(context)
+                                                  .size
+                                                  .height -
+                                              150,
+                                        ),
+                                        enableDrag: true,
+                                        showDragHandle: true,
+                                        isScrollControlled: true,
+                                        context: context,
+                                        builder: (context) => SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height -
+                                              150,
+                                          child: CartScreen(),
                                         ),
                                       );
                                     },
@@ -222,25 +236,45 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                                       ],
                                     ),
                                   ),
-                                  Container(
-                                    margin: const EdgeInsets.all(10),
-                                    height: 50,
-                                    width: 50,
-                                    decoration: BoxDecoration(
-                                      color: const Color.fromARGB(
-                                          255, 114, 192, 255),
-                                      borderRadius: BorderRadius.circular(15),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                            color: Color.fromARGB(43, 0, 0, 0),
-                                            spreadRadius: 1,
-                                            blurRadius: 1)
-                                      ],
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: const Icon(
-                                      Icons.shopping_bag_outlined,
-                                      color: Colors.white,
+                                  InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (ctx) => CheckoutScreen(
+                                              direct: true,
+                                              product: {
+                                                "${widget.product['id'].toString()}:$_currentVariant":
+                                                    {
+                                                  "product": widget.product,
+                                                  "selectedVariant":
+                                                      _currentVariant,
+                                                  "quantity": 1,
+                                                }
+                                              }),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      margin: const EdgeInsets.all(10),
+                                      height: 50,
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                        color: const Color.fromARGB(
+                                            255, 114, 192, 255),
+                                        borderRadius: BorderRadius.circular(15),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                              color:
+                                                  Color.fromARGB(43, 0, 0, 0),
+                                              spreadRadius: 1,
+                                              blurRadius: 1)
+                                        ],
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: const Icon(
+                                        Icons.shopping_bag_outlined,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                                   InkWell(
@@ -309,7 +343,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                                       builder: (ctx) => CheckoutScreen(
                                           direct: true,
                                           product: {
-                                            "${widget.product['id'].toString()}":
+                                            "${widget.product['id'].toString()}:$_currentVariant":
                                                 {
                                               "product": widget.product,
                                               "selectedVariant":
@@ -361,9 +395,21 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen>
                               InkWell(
                                 splashColor: Colors.transparent,
                                 onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (ctx) => CartScreen(),
+                                  showModalBottomSheet(
+                                    constraints: BoxConstraints(
+                                      maxHeight:
+                                          MediaQuery.of(context).size.height -
+                                              150,
+                                    ),
+                                    enableDrag: true,
+                                    showDragHandle: true,
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (context) => SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height -
+                                              150,
+                                      child: CartScreen(),
                                     ),
                                   );
                                 },
