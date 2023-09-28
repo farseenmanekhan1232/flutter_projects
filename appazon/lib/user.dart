@@ -5,6 +5,15 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthenticatedUser {
   Future<UserCredential?> googleAuth() async {
+    if (kIsWeb) {
+      GoogleAuthProvider googleProvider = GoogleAuthProvider();
+
+      googleProvider
+          .addScope('https://www.googleapis.com/auth/contacts.readonly');
+
+      return await FirebaseAuth.instance.signInWithPopup(googleProvider);
+    }
+
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
     final GoogleSignInAuthentication? googleAuth =
@@ -19,6 +28,17 @@ class AuthenticatedUser {
   }
 
   Future<UserCredential>? facebookAuth() async {
+    if (kIsWeb) {
+      FacebookAuthProvider facebookProvider = FacebookAuthProvider();
+
+      facebookProvider.addScope('email');
+      facebookProvider.setCustomParameters({
+        'display': 'popup',
+      });
+
+      // Once signed in, return the UserCredential
+      return await FirebaseAuth.instance.signInWithPopup(facebookProvider);
+    }
     // Trigger the sign-in flow
     final LoginResult loginResult = await FacebookAuth.instance.login();
 

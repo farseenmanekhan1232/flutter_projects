@@ -11,11 +11,16 @@ class SavedLocations extends StatefulWidget {
 }
 
 class _SavedLocationsState extends State<SavedLocations> {
+  late Future<List<String>> getLocations;
+  @override
+  void didChangeDependencies() {
+    getLocations =
+        Provider.of<Products>(context, listen: false).loadSavedLocations();
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
-    Future<List<String>> getLocations =
-        Provider.of<Products>(context, listen: false).loadSavedLocations();
-
     return FutureBuilder(
       future: getLocations,
       builder: (context, snapshot) {
@@ -29,6 +34,7 @@ class _SavedLocationsState extends State<SavedLocations> {
                 for (final location in locations)
                   InkWell(
                     onTap: () {
+                      Navigator.of(context).pop();
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (ctx) => DetailsScreen(

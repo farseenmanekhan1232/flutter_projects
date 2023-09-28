@@ -23,6 +23,7 @@ class Categories extends StatelessWidget {
           ),
         ),
         Wrap(
+          alignment: WrapAlignment.spaceBetween,
           children: [
             for (final String category
                 in Provider.of<Products>(context).categories)
@@ -36,9 +37,8 @@ class Categories extends StatelessWidget {
                 },
                 child: Container(
                     margin: const EdgeInsets.all(5),
-                    width: MediaQuery.of(context).size.width / 2 - 40,
                     child: Container(
-                      padding: const EdgeInsets.all(15),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         color: Colors

@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -46,32 +49,22 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyAVD1HLjvAay7ohihjNgDIt-hqNCV7RFtk',
-    appId: '1:1086423670194:web:8cacdfe70eb85b9a3218ab',
-    messagingSenderId: '1086423670194',
-    projectId: 'crwn-clothing-3061a',
-    authDomain: 'crwn-clothing-3061a.firebaseapp.com',
-    storageBucket: 'crwn-clothing-3061a.appspot.com',
-    measurementId: 'G-RWQ23LFE92',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC8yI0M9mSBt_DNXyZdOsy64QIYGnI9UNM',
-    appId: '1:1086423670194:android:188ed6bf676552443218ab',
-    messagingSenderId: '1086423670194',
-    projectId: 'crwn-clothing-3061a',
-    storageBucket: 'crwn-clothing-3061a.appspot.com',
+    apiKey: 'AIzaSyBnB_J-HEX7cr80n_OrIQ5jTMmapbTeNDg',
+    appId: '1:896452279720:android:0b440dbc18ce7f5d2a719d',
+    messagingSenderId: '896452279720',
+    projectId: 'attendence-342dd',
+    storageBucket: 'attendence-342dd.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyA4yGvLutUHTJ-eUvye6oBdHlLyWxTQfpk',
-    appId: '1:1086423670194:ios:7c24f2909de4cb633218ab',
-    messagingSenderId: '1086423670194',
-    projectId: 'crwn-clothing-3061a',
-    storageBucket: 'crwn-clothing-3061a.appspot.com',
-    androidClientId: '1086423670194-pd50ugrelckl31g3d0lmg6g1ta4vs19h.apps.googleusercontent.com',
-    iosClientId: '1086423670194-lqrspsdvdl8fhvn845n64ac1fk5rtuu3.apps.googleusercontent.com',
-    iosBundleId: 'com.example.appazon',
+    apiKey: 'AIzaSyAyVrKthYfIdtk77szzRtVmZ4rPKlpnoPo',
+    appId: '1:896452279720:ios:c2dedea6d55bb3d52a719d',
+    messagingSenderId: '896452279720',
+    projectId: 'attendence-342dd',
+    storageBucket: 'attendence-342dd.appspot.com',
+    androidClientId: '896452279720-b22m4nl2ietesifelekgic3tsrdtl073.apps.googleusercontent.com',
+    iosClientId: '896452279720-d3kci6qb1ahfjb9cil539c6ru3uphpt0.apps.googleusercontent.com',
+    iosBundleId: 'com.example.meetingRooms',
   );
 }

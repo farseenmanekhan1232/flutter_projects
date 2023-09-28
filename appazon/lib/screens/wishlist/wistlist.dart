@@ -4,8 +4,19 @@ import 'package:appazon/screens/wishlist/widgets/wishlist_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class WishlistScreen extends StatelessWidget {
+class WishlistScreen extends StatefulWidget {
   const WishlistScreen({super.key});
+
+  @override
+  State<WishlistScreen> createState() => _WishlistScreenState();
+}
+
+class _WishlistScreenState extends State<WishlistScreen> {
+  @override
+  void initState() {
+    Provider.of<Products>(context, listen: false).loadCart();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

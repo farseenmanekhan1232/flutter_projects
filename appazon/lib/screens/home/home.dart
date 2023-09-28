@@ -1,8 +1,8 @@
 import 'package:appazon/providers/products.dart';
 import 'package:appazon/screens/cart/cart.dart';
 import 'package:appazon/screens/search/search.dart';
-import 'package:appazon/widgets/categories.dart';
-import 'package:appazon/widgets/drawer.dart';
+import 'package:appazon/screens/home/widgets/categories.dart';
+import 'package:appazon/screens/home/widgets/drawer.dart';
 import 'package:appazon/widgets/products_list.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0,
@@ -89,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       context: context,
                       builder: (context) => SizedBox(
                         height: MediaQuery.of(context).size.height - 150,
-                        child: CartScreen(),
+                        child: const CartScreen(),
                       ),
                     );
                   },
@@ -126,24 +127,35 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       drawer: const DrawerWidget(),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(
-              height: 100,
-            ),
-            const Categories(),
-            const SizedBox(
-              height: 20,
-            ),
-            ProductsList(
-              title: "Today's Deals",
-              productsFuture: Provider.of<Products>(context, listen: false)
-                  .getProducts('top'),
-            ),
-          ],
+      body: RefreshIndicator(
+        color: const Color.fromARGB(255, 173, 173, 173),
+        onRefresh: () async {
+          return Provider.of<Products>(context, listen: false).loadEverything();
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (MediaQuery.of(context).orientation == Orientation.portrait)
+                const SizedBox(
+                  height: 100,
+                ),
+              if (MediaQuery.of(context).orientation == Orientation.landscape)
+                const SizedBox(
+                  height: 50,
+                ),
+              const Categories(),
+              const SizedBox(
+                height: 20,
+              ),
+              ProductsList(
+                title: "Today's Deals",
+                productsFuture: Provider.of<Products>(context, listen: false)
+                    .getProducts('top'),
+              ),
+            ],
+          ),
         ),
       ),
     );

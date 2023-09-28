@@ -58,7 +58,10 @@ class ProductsList extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  width: double.infinity,
+                  width:
+                      MediaQuery.of(context).orientation == Orientation.portrait
+                          ? double.infinity
+                          : MediaQuery.of(context).size.width,
                   padding: const EdgeInsets.all(10),
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.start,

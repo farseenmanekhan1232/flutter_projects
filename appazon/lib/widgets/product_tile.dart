@@ -41,9 +41,13 @@ class _ProductTileState extends State<ProductTile> {
           children: [
             Stack(
               children: [
-                SizedBox(
+                Container(
+                  margin: const EdgeInsets.all(10),
                   height: 200,
-                  width: MediaQuery.of(context).size.width / 2 - 40,
+                  width:
+                      MediaQuery.of(context).orientation == Orientation.portrait
+                          ? MediaQuery.of(context).size.width / 2 - 40
+                          : MediaQuery.of(context).size.width / 3 - 60,
                   child: Stack(
                     children: [
                       ClipRRect(
@@ -84,8 +88,11 @@ class _ProductTileState extends State<ProductTile> {
               ],
             ),
             Container(
-              padding: const EdgeInsets.all(15),
-              width: MediaQuery.of(context).size.width / 2 - 10,
+              padding: const EdgeInsets.all(5),
+              margin: const EdgeInsets.all(5),
+              width: MediaQuery.of(context).orientation == Orientation.portrait
+                  ? MediaQuery.of(context).size.width / 2 - 40
+                  : MediaQuery.of(context).size.width / 3 - 60,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,

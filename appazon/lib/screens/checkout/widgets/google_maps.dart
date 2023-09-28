@@ -146,97 +146,241 @@ class _GoogleMapsWidgetState extends State<GoogleMapsWidget> {
   @override
   Widget build(BuildContext context) {
     return _locationInput == null
-        ? const Column(
-            children: [
-              Center(
-                child: CircularProgressIndicator(),
-              )
-            ],
-          )
-        : Stack(
-            children: [
-              GoogleMap(
-                zoomControlsEnabled: false,
-                onTap: (latlng) async {
-                  if (mounted) {
-                    var place = await placemarkFromCoordinates(
-                        latlng.latitude, latlng.longitude);
-
-                    String input =
-                        "${place[1].subLocality!.isNotEmpty ? "${place[1].subLocality}," : ""} ${place[1].locality}, ${place[1].administrativeArea}, ${place[1].country}, ${place[1].postalCode}";
-                    setLocation(input);
-                  }
+        ? Scaffold(
+            appBar: AppBar(
+              elevation: 0.7,
+              backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
                 },
-                markers: _markers.isEmpty ? {} : Set.of(_markers),
-                onMapCreated: (GoogleMapController controller) {
-                  _controller.complete(controller);
-                },
-                initialCameraPosition: CameraPosition(
-                  target: _locationInput!,
-                  zoom: 14.7,
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Color.fromARGB(255, 0, 0, 0),
                 ),
               ),
-              Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.all(10),
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Form(
-                      child: TextFormField(
-                        autofocus: true,
-                        onChanged: _handleInput,
-                        decoration: const InputDecoration(
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            hintText: "Search"),
-                      ),
-                    ),
+              title: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushReplacementNamed('/home');
+                },
+                icon: const Icon(
+                  Icons.home_filled,
+                  color: Color.fromARGB(255, 29, 29, 29),
+                ),
+              ),
+            ),
+            body: const Column(
+              children: [
+                Center(
+                  child: CircularProgressIndicator(),
+                )
+              ],
+            ),
+          )
+        : Scaffold(
+            appBar: AppBar(
+              elevation: 0.7,
+              backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                  color: Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+              title: IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushReplacementNamed('/home');
+                },
+                icon: const Icon(
+                  Icons.home_filled,
+                  color: Color.fromARGB(255, 29, 29, 29),
+                ),
+              ),
+            ),
+            body: Stack(
+              children: [
+                GoogleMap(
+                  zoomControlsEnabled: false,
+                  onTap: (latlng) async {
+                    if (mounted) {
+                      var place = await placemarkFromCoordinates(
+                          latlng.latitude, latlng.longitude);
+
+                      String input =
+                          "${place[1].subLocality!.isNotEmpty ? "${place[1].subLocality}," : ""} ${place[1].locality}, ${place[1].administrativeArea}, ${place[1].country}, ${place[1].postalCode}";
+                      setLocation(input);
+                    }
+                  },
+                  markers: _markers.isEmpty ? {} : Set.of(_markers),
+                  onMapCreated: (GoogleMapController controller) {
+                    _controller.complete(controller);
+                  },
+                  initialCameraPosition: CameraPosition(
+                    target: _locationInput!,
+                    zoom: 14.7,
                   ),
-                  SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: _placesList.length,
-                          itemBuilder: (context, index) {
-                            return InkWell(
-                              onTap: () {
-                                setLocation(_placesList[index]['description']);
-                                setState(() {
-                                  _placesList.clear();
-                                });
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.symmetric(
-                                    vertical: BorderSide(
-                                        color: Colors.black, width: 2),
-                                  ),
-                                ),
-                                child: Text(
-                                  _placesList[index]['description'],
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                  ),
-                                ),
+                ),
+                if (MediaQuery.of(context).orientation == Orientation.landscape)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(10),
+                        child: IconButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              constraints: BoxConstraints(
+                                maxHeight: MediaQuery.of(context).size.height,
                               ),
+                              enableDrag: true,
+                              showDragHandle: true,
+                              isScrollControlled: true,
+                              context: context,
+                              builder: (context) {
+                                return SizedBox(
+                                  height: MediaQuery.of(context).size.height,
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.all(20),
+                                        child: Form(
+                                          child: TextFormField(
+                                            autofocus: true,
+                                            onChanged: _handleInput,
+                                            decoration: const InputDecoration(
+                                                enabledBorder: InputBorder.none,
+                                                focusedBorder: InputBorder.none,
+                                                hintText: "Search"),
+                                          ),
+                                        ),
+                                      ),
+                                      SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+                                            ListView.builder(
+                                              scrollDirection: Axis.vertical,
+                                              shrinkWrap: true,
+                                              itemCount: _placesList.length,
+                                              itemBuilder: (context, index) {
+                                                return InkWell(
+                                                  onTap: () {
+                                                    setLocation(
+                                                        _placesList[index]
+                                                            ['description']);
+                                                    setState(() {
+                                                      _placesList.clear();
+                                                    });
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                      color: Colors.white,
+                                                      border: Border.symmetric(
+                                                        vertical: BorderSide(
+                                                            color: Colors.black,
+                                                            width: 2),
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      _placesList[index]
+                                                          ['description'],
+                                                      style: const TextStyle(
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
                             );
                           },
+                          icon: const Icon(
+                            Icons.search,
+                            size: 30,
+                          ),
                         ),
-                      ],
-                    ),
+                      )
+                    ],
                   ),
-                ],
-              ),
-            ],
+                if (MediaQuery.of(context).orientation == Orientation.portrait)
+                  Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(5),
+                        padding:
+                            const EdgeInsets.only(left: 20, top: 5, bottom: 5),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Form(
+                          child: TextFormField(
+                            autofocus: true,
+                            onChanged: _handleInput,
+                            decoration: const InputDecoration(
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                hintText: "Search"),
+                          ),
+                        ),
+                      ),
+                      SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: _placesList.length,
+                              itemBuilder: (context, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    setLocation(
+                                        _placesList[index]['description']);
+                                    setState(() {
+                                      _placesList.clear();
+                                    });
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.symmetric(
+                                        vertical: BorderSide(
+                                            color: Colors.black, width: 2),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      _placesList[index]['description'],
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
           );
   }
 }

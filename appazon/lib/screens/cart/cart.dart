@@ -1,14 +1,25 @@
 import 'package:appazon/providers/products.dart';
 import 'package:appazon/screens/cart/widgets/cart_item.dart';
-import 'package:appazon/screens/checkout/address.dart';
+import 'package:appazon/screens/checkout/checkout.dart';
 import 'package:appazon/screens/product_details/product_details.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CartScreen extends StatelessWidget {
-  CartScreen({super.key});
+class CartScreen extends StatefulWidget {
+  const CartScreen({super.key});
 
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
   double total = 0;
+
+  @override
+  void initState() {
+    Provider.of<Products>(context, listen: false).loadCart();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -4,10 +4,15 @@ import 'package:appazon/screens/checkout/order_placed.dart';
 import 'package:appazon/screens/product_details/product_details.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class DetailsScreen extends StatefulWidget {
-  DetailsScreen(
-      {super.key, required this.location, this.savedLocation, this.product});
+  DetailsScreen({
+    super.key,
+    required this.location,
+    this.savedLocation,
+    this.product,
+  });
 
   final String location;
 
@@ -21,9 +26,9 @@ class DetailsScreen extends StatefulWidget {
 
 class _DetailsScreenState extends State<DetailsScreen> {
   bool isAdded = false;
+  double price = 0.0;
 
-  int paymentMode = -1;
-  String paymentMethod = "";
+  final _key = GlobalKey<FormState>();
 
   final TextEditingController _controller = TextEditingController();
 
@@ -36,7 +41,70 @@ class _DetailsScreenState extends State<DetailsScreen> {
         isAdded = true;
       });
     }
+
+    if (widget.product != null) {
+      setState(() {
+        price = widget.product!.values.first!['product']['price'].toDouble();
+      });
+    } else {
+      setState(() {
+        Provider.of<Products>(
+          context,
+        ).cart.values.forEach(
+          (product) {
+            price = (price + product['product']['price'] * product['quantity']);
+          },
+        );
+      });
+    }
     super.initState();
+  }
+
+  void handlePaymentErrorResponse(PaymentFailureResponse response) {
+    showAlertDialog(context, "Payment Failed", "${response.message}");
+  }
+
+  void handlePaymentSuccessResponse(PaymentSuccessResponse response) {
+    showAlertDialog(
+        context, "Payment Successful", "Payment ID: ${response.paymentId}");
+
+    Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) => OrderPlacedScreen(
+            product: widget.product,
+            price: price,
+            paymentMethod: response.paymentId!,
+            location: widget.location,
+            phoneNumber: phoneNumber),
+      ),
+    );
+  }
+
+  void handleExternalWalletSelected(ExternalWalletResponse response) {
+    showAlertDialog(
+        context, "External Wallet Selected", "${response.walletName}");
+  }
+
+  void showAlertDialog(BuildContext context, String title, String message) {
+    // set up the buttons
+    Widget continueButton = ElevatedButton(
+      child: const Text("Continue"),
+      onPressed: () {},
+    );
+    AlertDialog alert = AlertDialog(
+      title: Text(title),
+      content: Text(message),
+      actions: [
+        continueButton,
+      ],
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   @override
@@ -47,18 +115,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double price = 0.0;
-
-    if (widget.product != null) {
-      price = widget.product!.values.first!['product']['price'].toDouble();
-    } else {
-      Provider.of<Products>(context).cart.values.forEach(
-        (product) {
-          price = price + product['product']['price'] * product['quantity'];
-        },
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0.7,
@@ -134,6 +190,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                     ),
                                   )
                                 : Container(
+                                    width: 20,
                                     padding: const EdgeInsets.all(12),
                                     child: const Icon(
                                       Icons.check_circle,
@@ -153,15 +210,16 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     height: 10,
                   ),
                   Form(
+                    key: _key,
                     autovalidateMode: AutovalidateMode.always,
                     child: TextFormField(
-                      controller: _controller,
                       validator: (value) {
-                        if (phoneNumber.isEmpty) {
-                          return "Enter valid phone number";
-                        } else if (phoneNumber[0] != '+') {
-                          return "Enter country code first";
-                        } else if (phoneNumber.length < 9) {
+                        RegExp format =
+                            RegExp(r'^\+[0-9]{1,3}[7-9]([0-9]{9})$');
+
+                        if (value == null) {
+                          return "Enter phone number ";
+                        } else if (!format.hasMatch(value)) {
                           return "Enter valid phone number";
                         }
                         return null;
@@ -204,7 +262,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (ctx) => ProductDetailsScreen(
-                                      product: product['product']),
+                                    product: product['product'],
+                                  ),
                                 ),
                               );
                             },
@@ -217,7 +276,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (ctx) => ProductDetailsScreen(
-                                      product: product_['product']),
+                                    product: product_['product'],
+                                  ),
                                 ),
                               );
                             },
@@ -228,135 +288,66 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   const SizedBox(
                     height: 20,
                   ),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  SizedBox(
+                      child: Column(
                     children: [
-                      Text(
-                        "Payment mode",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Overview",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Total Amount : "),
+                              Text("\$$price")
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "Shipping Charges",
+                              ),
+                              Text(
+                                '\$${(price * 0.0121).toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 112, 112, 112),
+                                ),
+                              )
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Final Amount :"),
+                              Text(
+                                "\$${(price * 0.0121 + price).toStringAsFixed(2)}",
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 60,
+                          ),
+                        ],
+                      )
                     ],
-                  ),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            paymentMode = 1;
-                            paymentMethod = "Google Pay";
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              width: 1,
-                              color: paymentMode == 1
-                                  ? const Color.fromARGB(255, 30, 148, 245)
-                                  : const Color.fromARGB(255, 206, 206, 206),
-                            ),
-                          ),
-                          child: Image.asset(
-                            "assets/images/gpay.png",
-                            width: 80,
-                            height: 40,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            paymentMode = 2;
-                            paymentMethod = "PhonePe";
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              width: 1,
-                              color: paymentMode == 2
-                                  ? const Color.fromARGB(255, 30, 148, 245)
-                                  : const Color.fromARGB(255, 206, 206, 206),
-                            ),
-                          ),
-                          child: Image.asset(
-                            "assets/images/phonepe.png",
-                            width: 80,
-                            height: 40,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            paymentMode = 3;
-                            paymentMethod = "Paytm";
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              width: 2,
-                              color: paymentMode == 3
-                                  ? const Color.fromARGB(255, 30, 148, 245)
-                                  : const Color.fromARGB(255, 206, 206, 206),
-                            ),
-                          ),
-                          child: Image.asset(
-                            "assets/images/paytm.png",
-                            width: 80,
-                            height: 40,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  InkWell(
-                    onTap: () {
-                      setState(() {
-                        paymentMode = 4;
-                        paymentMethod = "COD";
-                      });
-                    },
-                    child: Container(
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.all(10),
-                        margin: const EdgeInsets.all(15),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            width: 1,
-                            color: paymentMode == 4
-                                ? const Color.fromARGB(255, 30, 148, 245)
-                                : const Color.fromARGB(255, 206, 206, 206),
-                          ),
-                        ),
-                        child: const Text(
-                          'Cash on Delivery',
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
-                        )),
-                  ),
-                  const SizedBox(
-                    height: 100,
-                  )
+                  ))
                 ],
               ),
             ),
@@ -365,18 +356,36 @@ class _DetailsScreenState extends State<DetailsScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               InkWell(
-                onTap: paymentMode != -1
+                onTap: (_key.currentState != null
+                        ? _key.currentState!.validate()
+                        : false)
                     ? () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (ctx) => OrderPlacedScreen(
-                                product: widget.product,
-                                price: price,
-                                paymentMethod: paymentMethod,
-                                location: widget.location,
-                                phoneNumber: phoneNumber),
-                          ),
-                        );
+                        final razorpay = Razorpay();
+
+                        double billAmount = price * 100.00 + price * 12.10;
+
+                        final options = {
+                          'key': 'rzp_test_bAzBDm2llxnyHw',
+                          'amount': billAmount.toInt(),
+                          "currency": "USD",
+                          'name': 'Appazon',
+                          'retry': {'enabled': true, 'max_count': 1},
+                          'send_sms_hash': true,
+                          'prefill': {
+                            "email": "test@razorpay.com",
+                            'contact': phoneNumber,
+                          },
+                          'external': {
+                            'wallets': ['paytm']
+                          }
+                        };
+                        razorpay.on(Razorpay.EVENT_PAYMENT_ERROR,
+                            handlePaymentErrorResponse);
+                        razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS,
+                            handlePaymentSuccessResponse);
+                        razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET,
+                            handleExternalWalletSelected);
+                        razorpay.open(options);
                       }
                     : null,
                 child: Container(
@@ -385,7 +394,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   margin:
                       const EdgeInsets.only(left: 20, right: 20, bottom: 10),
                   decoration: BoxDecoration(
-                    color: paymentMode != -1
+                    color: (_key.currentState != null
+                            ? _key.currentState!.validate()
+                            : false)
                         ? const Color.fromARGB(255, 0, 226, 94)
                         : Colors.grey,
                     boxShadow: const [

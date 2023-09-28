@@ -25,16 +25,18 @@ class Products extends ChangeNotifier {
   get wishlist => _wishlist;
   get orders => _orders;
 
-  Future<List<String>> loadCategories() async {
-    if (_categories.isNotEmpty) return _categories;
+  void loadEverything() async {
+    await loadCategories();
+    await loadProducts('top');
+  }
 
+  Future<List<String>> loadCategories() async {
     var response = await http.get(
       Uri.parse("https://ecommerce-dummy-data.onrender.com/categories"),
     );
 
-    List<String> data = List.from(jsonDecode(response.body)['categories']);
+    _categories = List.from(jsonDecode(response.body)['categories']);
 
-    _categories = data;
     notifyListeners();
     return _categories;
   }
@@ -55,16 +57,7 @@ class Products extends ChangeNotifier {
   }
 
   Future<List<Map<String, dynamic>>> getProducts(String category) async {
-    if (_products.containsKey(category)) return _products[category]!;
-
     return await loadProducts(category);
-  }
-
-  void loadEverything() {
-    loadCategories();
-    loadProducts('top');
-    loadCart();
-    loadWishlist();
   }
 
   void setSize(size) {
@@ -98,6 +91,8 @@ class Products extends ChangeNotifier {
   }
 
   void loadCart() async {
+    if (_cart.isNotEmpty) return;
+
     Map<String, Map<String, dynamic>> data = {};
 
     if (FirebaseAuth.instance.currentUser != null) {
@@ -212,6 +207,8 @@ class Products extends ChangeNotifier {
   }
 
   void loadWishlist() async {
+    if (_wishlist.isNotEmpty) return;
+
     Map<String, Map<String, dynamic>> data = {};
 
     if (FirebaseAuth.instance.currentUser != null) {
@@ -262,11 +259,11 @@ class Products extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future saveLocation(String input) async {
-    return await FirebaseFirestore.instance
+  Future<void> saveLocation(String input) async {
+    await FirebaseFirestore.instance
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
-        .update({
+        .set({
       'locations': FieldValue.arrayUnion([input])
     });
   }
@@ -277,7 +274,7 @@ class Products extends ChangeNotifier {
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .get()
         .then((data) {
-      return (data['locations']);
+      return (data['locations'] ?? []);
     });
 
     return List.from(data);
@@ -334,7 +331,8 @@ class Products extends ChangeNotifier {
           _orders[doc.id.toString()] = {
             "products": json.decode(doc.data()['products']),
             "price": doc.data()['price'],
-            "location": doc.data()['location']
+            "location": doc.data()['location'],
+            "paymentMethod": doc.data()['paymentMethod']
           };
         }
         return _orders;
