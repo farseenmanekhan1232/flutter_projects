@@ -1,17 +1,13 @@
 # AppaZon Demo
 
+https://github.com/farseenmanekhan1232/flutter_projects/assets/67449931/bca1b86f-8368-4cb7-b00c-5a1cf65803e1
 
 
-https://github.com/farseenmanekhan1232/flutter_projects/assets/67449931/23f5e8af-9f49-4a29-abca-095222e479a7
 
 
 
 # NewsApp Demo
 
 
-
-https://github.com/farseenmanekhan1232/flutter_projects/assets/67449931/6499d8c5-f380-4679-a07a-dedf19a75f7f
-
-
-
+https://github.com/farseenmanekhan1232/flutter_projects/assets/67449931/6563f472-8f93-431e-b426-01d661f60cf1
 
